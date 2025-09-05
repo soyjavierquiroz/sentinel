@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  notifier:
+    image: sentinel-notifier:latest
+    build:
+      context: ./notifier
+    secrets:
+      - telegram_bot_token
+      - telegram_chat_id
+    networks:
+      - general_network
+    deploy:
+      restart_policy:
+        condition: none
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  general_network:
+    external: true
+
+secrets:
+  telegram_bot_token:
+    external: true
+  telegram_chat_id:
+    external: true
