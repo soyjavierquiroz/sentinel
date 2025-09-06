@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  api:
+    image: sentinel-api:latest
+    build:
+      context: ./api
+    environment:
+      PGHOST: "sentinel-data_postgres"
+      PGUSER: "sentinel"
+      PGDATABASE: "sentinel"
+      PGPORT: "5432"
+      POSTGRES_PASSWORD_FILE: "/run/secrets/postgres_password"
+      TZ: "America/La_Paz"
+      PORT: "3000"
+    secrets:
+      - postgres_password
+    networks:
+      - general_network
+      - traefik_public
+    deploy:
+      placement:
+        constraints: [ "node.role == manager" ]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik_public"
+        - "traefik.http.routers.sentinel_api.rule=Host(`api.sentinel.local`)"
+        - "traefik.http.routers.sentinel_api.entrypoints=web"
+        - "traefik.http.services.sentinel_api.loadbalancer.server.port=3000"
+
+networks:
+  general_network:
+    external: true
+  traefik_public:
+    external: true
+
+secrets:
+  postgres_password:
+    external: true
