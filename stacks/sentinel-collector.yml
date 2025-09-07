@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  collector:
+    image: sentinel-collector:v0.1.1
+    build:
+      context: ./collector
+    environment:
+      POSTGRES_PASSWORD: "SentinelP2P123!"
+    networks:
+      - general_network
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  general_network:
+    external: true

@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  signals:
+    image: sentinel-signals:latest
+    build:
+      context: ./signals
+    environment:
+      POSTGRES_PASSWORD: "SentinelP2P123!"
+    networks:
+      - general_network
+    deploy:
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  general_network:
+    external: true
